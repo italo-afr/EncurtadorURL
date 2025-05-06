@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@section Styles{
+    <link rel="stylesheet" href="~/css/home/layout.css" asp-append-version="true" /> 
+}
+
+<div class="text-center">
+    <h2 class="textUrl">Coloque sua URL aqui em baixo:</h2>
+    <input type="url" class="getLink" placeholder="Cole o link aqui!" required/>
+    <button type="submit" class="buttonLink">Encurtar</button>
+
+    <p>@ViewData["TesteConexao"]</p>
+
+</div>
