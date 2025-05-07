@@ -2,15 +2,25 @@
     ViewData["Title"] = "Home Page";
 }
 
-@section Styles{
-    <link rel="stylesheet" href="~/css/home/layout.css" asp-append-version="true" /> 
+@model EncurtadorURL.Models.ShortenViewModel
+
+<h2>Encurtador de URL</h2>
+
+<form method="post">
+    <div>
+        <label>Insira a URL original:</label>
+        <input type="text" name="OriginalUrl" value="@Model.UrlOriginal" style="width: 400px;" />
+    </div>
+    <div>
+        <button type="submit">Encurtar</button>
+    </div>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.UrlEncurtada))
+{
+    <p><strong>URL Encurtada:</strong> <a href="@Model.UrlEncurtada" target="_blank">@Model.UrlEncurtada</a></p>
 }
-
-<div class="text-center">
-    <h2 class="textUrl">Coloque sua URL aqui em baixo:</h2>
-    <input type="url" class="getLink" placeholder="Cole o link aqui!" required/>
-    <button type="submit" class="buttonLink">Encurtar</button>
-
-    <p>@ViewData["TesteConexao"]</p>
-
-</div>
+@if (!string.IsNullOrEmpty(Model.MensagemErro))
+{
+    <p style="color:red">@Model.MensagemErro</p>
+}

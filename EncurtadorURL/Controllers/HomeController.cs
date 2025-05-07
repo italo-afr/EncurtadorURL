@@ -81,6 +81,49 @@ namespace EncurtadorURL.Controllers
 
             return Redirect(link.link_origin);
         }
+
+        [HttpGet("/")]
+        public IActionResult Index()
+        {
+            return View(new ShortenViewModel());
+        }
+
+        [HttpPost("/")]
+        public async Task<IActionResult> Index(ShortenViewModel model)
+        {
+            if (string.IsNullOrEmpty(model.UrlOriginal))
+            {
+                model.MensagemErro = "A URL é obrigatória";
+                return View(model);
+            }
+
+            string shortCode;
+            bool codeExists;
+
+            do
+            {
+                shortCode = GenerateShortCode();
+                var existing = await _supabase
+                    .From<HomeModel>()
+                    .Filter("short_code", Postgrest.Constants.Operator.Equals, shortCode)
+                    .Get();
+                codeExists = existing.Models.Any();
+            }
+            while (codeExists);
+
+            var newLink = new HomeModel
+            {
+                link_origin = model.UrlOriginal,
+                short_code = shortCode,
+                created_at = DateTime.UtcNow,
+            };
+
+            await _supabase.From<HomeModel>().Insert(newLink);
+
+            model.UrlEncurtada = $"https://short.local/{shortCode}";
+            return View(model);
+        }
+
     }
 
 }

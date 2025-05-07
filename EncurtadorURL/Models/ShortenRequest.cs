@@ -1,4 +1,4 @@
-﻿namespace EncurtadorURL.Controllers
+﻿namespace EncurtadorURL.Models
 {
     public class ShortenRequest
     {

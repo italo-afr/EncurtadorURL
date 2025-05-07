@@ -7,6 +7,8 @@ services:
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
+      - "--log.level=DEBUG"
+      - "--accesslog=true"
     ports:
       - "80:80"
       - "8080:8080" # Painel Traefik
@@ -19,10 +21,9 @@ services:
       dockerfile: Dockerfile
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.encurtador.rule=PathPrefix(`/`)"
-      - "traefik.http.services.encurtador.loadbalancer.server.port=8080"
+      - "traefik.http.routers.encurtador.rule=Host(`short.local`)"
+      - "traefik.http.services.encurtador.loadbalancer.server.port=5000"
       - "traefik.http.routers.encurtador.entrypoints=web"
-
     depends_on:
       - db
 
