@@ -17,17 +17,15 @@ namespace EncurtadorURL.Controllers
             _supabase = supabase;
         }
 
-        // Função utilitária para gerar short_code
         private static string GenerateShortCode(int length = 6)
         {
             const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             var random = new Random();
             return new string(Enumerable.Repeat(chars, length)
-                .Select(s => s[random.Next(s.Length)]).ToArray() );
+                .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        // Endpoint para encurtar o link 
-
+        // Endpoint para API externa (Postman, por exemplo)
         [HttpPost("api/shorten")]
         public async Task<IActionResult> Shorten([FromBody] ShortenRequest request)
         {
@@ -42,53 +40,56 @@ namespace EncurtadorURL.Controllers
                 shortCode = GenerateShortCode();
                 var existing = await _supabase
                     .From<HomeModel>()
-                    .Filter("short_code", Postgrest.Constants.Operator.Equals, shortCode)
+                    .Filter("codigo", Postgrest.Constants.Operator.Equals, shortCode.ToLower())
                     .Get();
+
                 codeExists = existing.Models.Any();
             }
             while (codeExists);
 
             var newLink = new HomeModel
             {
+                short_code = shortCode.ToLower(),
                 link_origin = request.Url,
-                short_code = shortCode,
-                created_at = DateTime.UtcNow,
+                created_at = DateTime.UtcNow
             };
 
             await _supabase.From<HomeModel>().Insert(newLink);
 
-            return Ok(new 
-            { 
-                short_code = $"https://short.local/{shortCode}",
-                original_url = request.Url
+            return Ok(new
+            {
+                url = $"http://short.local/{shortCode}"
             });
         }
-        // Endpoint para redirecionar o link encurtado
-        [HttpGet("{shortCode}")]
+
+        // Redirecionamento de links encurtados (acesso pelo navegador)
+        [Route("/{shortCode}")]
+        [HttpGet]
         public async Task<IActionResult> RedirectToOriginal(string shortCode)
         {
             var result = await _supabase
                 .From<HomeModel>()
-                .Filter("short_code", Postgrest.Constants.Operator.Equals, shortCode)
+                .Filter("codigo", Postgrest.Constants.Operator.Equals, shortCode.ToLower())
                 .Get();
 
             var link = result.Models.FirstOrDefault();
 
             if (link == null)
-            {
                 return NotFound("Link encurtado não encontrado");
-            }
 
             return Redirect(link.link_origin);
         }
 
-        [HttpGet("/")]
+        // Tela inicial (GET)
+        [HttpGet]
         public IActionResult Index()
         {
             return View(new ShortenViewModel());
         }
 
-        [HttpPost("/")]
+        // Recebe o formulário e salva (POST)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(ShortenViewModel model)
         {
             if (string.IsNullOrEmpty(model.UrlOriginal))
@@ -105,25 +106,24 @@ namespace EncurtadorURL.Controllers
                 shortCode = GenerateShortCode();
                 var existing = await _supabase
                     .From<HomeModel>()
-                    .Filter("short_code", Postgrest.Constants.Operator.Equals, shortCode)
+                    .Filter("codigo", Postgrest.Constants.Operator.Equals, shortCode.ToLower())
                     .Get();
+
                 codeExists = existing.Models.Any();
             }
             while (codeExists);
 
             var newLink = new HomeModel
             {
+                short_code = shortCode.ToLower(),
                 link_origin = model.UrlOriginal,
-                short_code = shortCode,
                 created_at = DateTime.UtcNow,
             };
 
             await _supabase.From<HomeModel>().Insert(newLink);
 
-            model.UrlEncurtada = $"https://short.local/{shortCode}";
+            model.UrlEncurtada = $"http://short.local/{shortCode}";
             return View(model);
         }
-
     }
-
 }

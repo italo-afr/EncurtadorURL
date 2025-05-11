@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   traefik:
     image: traefik:v2.10
@@ -11,9 +9,11 @@ services:
       - "--accesslog=true"
     ports:
       - "80:80"
-      - "8080:8080" # Painel Traefik
+      - "8080:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - traefik
 
   app:
     build:
@@ -26,6 +26,10 @@ services:
       - "traefik.http.routers.encurtador.entrypoints=web"
     depends_on:
       - db
+    volumes:
+      - datakeys:/root/.aspnet/DataProtection-Keys
+    networks:
+      - traefik
 
   db:
     image: postgres:15
@@ -38,3 +42,8 @@ services:
 
 volumes:
   pgdata:
+  datakeys:
+
+networks:
+  traefik:
+    external: true

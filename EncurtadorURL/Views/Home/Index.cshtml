@@ -4,23 +4,33 @@
 
 @model EncurtadorURL.Models.ShortenViewModel
 
-<h2>Encurtador de URL</h2>
+<div class="container">
+    <h1 class="title">Encurtador de URL</h1>
 
-<form method="post">
-    <div>
-        <label>Insira a URL original:</label>
-        <input type="text" name="OriginalUrl" value="@Model.UrlOriginal" style="width: 400px;" />
-    </div>
-    <div>
-        <button type="submit">Encurtar</button>
-    </div>
-</form>
+    <form asp-action="Index" asp-controller="Home" method="post" class="shorten-form">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label for="urlInput">URL original</label>
+            <input type="text" id="urlInput" name="UrlOriginal" value="@Model.UrlOriginal" placeholder="https://..." />
+        </div>
 
-@if (!string.IsNullOrEmpty(Model.UrlEncurtada))
-{
-    <p><strong>URL Encurtada:</strong> <a href="@Model.UrlEncurtada" target="_blank">@Model.UrlEncurtada</a></p>
-}
-@if (!string.IsNullOrEmpty(Model.MensagemErro))
-{
-    <p style="color:red">@Model.MensagemErro</p>
-}
+        <div class="form-actions">
+            <button type="submit">Encurtar</button>
+        </div>
+    </form>
+
+    @if (!string.IsNullOrEmpty(Model.UrlEncurtada))
+    {
+    <div class="result success">
+        <strong>URL Encurtada:</strong>
+        <a href="@Model.UrlEncurtada" target="_blank">@Model.UrlEncurtada</a>
+    </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.MensagemErro))
+    {
+    <div class="result error">
+        @Model.MensagemErro
+    </div>
+    }
+</div>

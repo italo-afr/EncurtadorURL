@@ -1,24 +1,23 @@
-﻿using Postgrest.Models;
-using Postgrest.Attributes;
+﻿using Postgrest.Attributes;
+using Postgrest.Models;
+using System;
 
 namespace EncurtadorURL.Models
 {
-    [Table("encurtador")]
+    // Esse model é usado para mapear a tabela "urls" no banco de dados no Supabase
+    [Table("urls")]
     public class HomeModel : BaseModel
     {
-        [Column("id")]
+        [PrimaryKey("id", false)]
         public int Id { get; set; }
 
-        [Column("short_code")]
+        [Column("codigo")] 
         public string? short_code { get; set; }
 
-        [Column("link_origin")]
+        [Column("url_original")]
         public string? link_origin { get; set; }
 
-        [Column("created_at")]
+        [Column("criado_em")]
         public DateTime created_at { get; set; }
-
-        [Column("clicks")]
-        public int clicks { get; set; }
     }
 }
