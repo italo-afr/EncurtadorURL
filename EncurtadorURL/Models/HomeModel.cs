@@ -19,5 +19,8 @@ namespace EncurtadorURL.Models
 
         [Column("criado_em")]
         public DateTime created_at { get; set; }
+
+        [Column("expira_em")]
+        public DateTime? expires_at { get; set; }
     }
 }

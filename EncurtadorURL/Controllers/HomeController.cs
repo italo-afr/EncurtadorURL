@@ -82,8 +82,10 @@ namespace EncurtadorURL.Controllers
 
         // Tela inicial (GET)
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
+
         {
+            await RemoverLinksExpirados();
             return View(new ShortenViewModel());
         }
 
@@ -118,12 +120,22 @@ namespace EncurtadorURL.Controllers
                 short_code = shortCode.ToLower(),
                 link_origin = model.UrlOriginal,
                 created_at = DateTime.UtcNow,
+                expires_at = DateTime.UtcNow.AddDays(7)
             };
 
             await _supabase.From<HomeModel>().Insert(newLink);
 
             model.UrlEncurtada = $"http://short.local/{shortCode}";
+
             return View(model);
         }
+        private async Task RemoverLinksExpirados()
+        {
+            await _supabase
+                .From<HomeModel>()
+                .Filter("expira_em", Postgrest.Constants.Operator.LessThan, DateTime.UtcNow.ToString("o"))
+                .Delete();
+        }
+
     }
 }
