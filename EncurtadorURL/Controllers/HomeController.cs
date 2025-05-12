@@ -25,7 +25,7 @@ namespace EncurtadorURL.Controllers
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        // Endpoint para API externa (Postman, por exemplo)
+        // Endpoint para API externa (Postman)
         [HttpPost("api/shorten")]
         public async Task<IActionResult> Shorten([FromBody] ShortenRequest request)
         {
