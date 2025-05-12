@@ -2,6 +2,10 @@
 
 Este projeto é um encurtador de URLs com frontend em ASP.NET Core MVC, backend conectado ao Supabase (PostgreSQL), roteamento reverso com Traefik, deploy com Docker e suporte à expiração automática de links.
 
+### Demonstração
+
+![Demonstração do Encurtador de URL](assets/demo.gif)
+
 ---
 
 ## ✅ Funcionalidades
