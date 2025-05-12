@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /EncurtadorURL/appsettings.Development.json
 /EncurtadorURL/appsettings.json
+/EncurtadorURL/EncurtadorURL.csproj
