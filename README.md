@@ -4,7 +4,7 @@ Este projeto é um encurtador de URLs com frontend em ASP.NET Core MVC, backend 
 
 ### Demonstração
 
-![Demonstração do Encurtador de URL](assets/demo.gif)
+![Demonstração do Encurtador de URL](EncurtadorURL/assets/demo.gif)
 
 ---
 
